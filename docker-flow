@@ -46,7 +46,7 @@ def main():
 
     # TODO: put everything in a executor style object list
 
-    flow = dockerflow.DockerFlow(name=args.name, tag=args.tag)
+    flow = dockerflow.DockerFlow(name=args.name, tag=args.tag, consul_dns=args.consul_dns, ports=args.port)
 
     if args.build:
         flow.build()
@@ -54,7 +54,7 @@ def main():
         if args.push:
             flow.push()
 
-    flow.restart_container(args.consul_dns, args.port)
+    flow.restart_container()
 
     if args.kong:
         with open(args.kong_json) as kong_json:
