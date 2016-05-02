@@ -15,6 +15,7 @@ class KongApiGateway(object):
 
         logger.info('Deleting API with name %s', name)
         response = requests.delete(url + name)
+        logger.debug(response.status_code)
         logger.debug(response.text)
 
         logger.info('Adding API with name %s', name)
