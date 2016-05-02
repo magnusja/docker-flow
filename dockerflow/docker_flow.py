@@ -64,14 +64,15 @@ class DockerFlow(object):
         if consul_dns:
             host_config['dns'] = [self.consul_ip, '8.8.8.8']
 
-        host_config = self.client.create_host_config(port_bindings=host_config['port_bindings'], dns=host_config['dns'])
+        host_config = self.client.create_host_config(port_bindings=host_config.get('port_bindings', None),
+                                                     dns=host_config.get('dns', None))
 
         logger.debug('host config: %s', host_config)
 
         container = self.client.create_container(image=self.full_tag)
-        
+
         self.client.start(container, dns_search=['service.consul'] if consul_dns else None,
-                          port_bindings=host_config['PortBindings'],
-                          dns=host_config['Dns'])
+                          port_bindings=host_config.get('PortBindings', None),
+                          dns=host_config.get('Dns', None))
 
 
