@@ -40,7 +40,7 @@ class DockerFlow(object):
         logger.info('Pushing docker image')
         self.check_response(self.client.push(repository=self.name, tag=self.tag))
 
-    def restart_container(self, consul_dns):
+    def restart_container(self, consul_dns, ports=None):
         if len(self.running_containers) > 0:
             logger.info('Stop running containers')
             for container in self.running_containers:
@@ -48,12 +48,30 @@ class DockerFlow(object):
                 self.client.stop(container)
 
         logger.info('Starting container')
-        host_config = self.client.create_host_config()
+
+        host_config = dict()
+        if ports:
+            port_map = dict()
+            for port in ports:
+                host_ip, container_port = port.rsplit(':', 1)
+                if ':' in host_ip:
+                    host_ip = tuple(host_ip.split(':'))
+
+                port_map[container_port] = host_ip
+
+            host_config['port_bindings'] = port_map
 
         if consul_dns:
             host_config['dns'] = [self.consul_ip, '8.8.8.8']
 
-        container = self.client.create_container(image=self.full_tag, host_config=host_config)
-        self.client.start(container, dns_search=['service.consul'] if consul_dns else None)
+        host_config = self.client.create_host_config(port_bindings=host_config['port_bindings'], dns=host_config['dns'])
+
+        logger.debug('host config: %s', host_config)
+
+        container = self.client.create_container(image=self.full_tag)
+        
+        self.client.start(container, dns_search=['service.consul'] if consul_dns else None,
+                          port_bindings=host_config['PortBindings'],
+                          dns=host_config['Dns'])
 
 

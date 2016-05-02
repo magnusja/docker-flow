@@ -27,6 +27,7 @@ def setup_argparser():
     parser.add_argument('--name', type=str, help='Docker image/container name', required=True)
     parser.add_argument('--tag', type=str, help='Image tag', default='latest')
     parser.add_argument('--build', help='Build image from ./Dockerfile', action='store_true')
+    parser.add_argument('--port', help='Port mapping line in docker run', action='append')
     parser.add_argument('--push', help='Push image to registry or docker hub', action='store_true')
     parser.add_argument('--consul-dns', help='Set DNS to container with name consul', action='store_true',
                         dest='consul_dns')
@@ -51,7 +52,7 @@ def main():
         if args.push:
             flow.push()
 
-    flow.restart_container(args.consul_dns)
+    flow.restart_container(args.consul_dns, args.port)
 
     if args.kong:
         with open(args.kong_json) as kong_json:
