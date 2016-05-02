@@ -14,6 +14,8 @@ class DockerFlow(object):
         self.running_containers = self.client.containers(filters={'ancestor': name})
         logger.info('Running containers with image/name %s: %s', name, self.running_containers)
 
+        # TODO: init host_config in extra method called in init
+
     @property
     def consul_ip(self):
         logger.info('Getting consul IP')

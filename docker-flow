@@ -44,6 +44,8 @@ def main():
     parser = setup_argparser()
     args = parser.parse_args()
 
+    # TODO: put everything in a executor style object list
+
     flow = dockerflow.DockerFlow(name=args.name, tag=args.tag)
 
     if args.build:
