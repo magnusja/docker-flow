@@ -15,10 +15,18 @@ class DockerFlow(object):
         logger.info('Running containers with image/name %s: %s', name, self.running_containers)
 
     def check_response(self, generator):
-        logger.debug([line for line in generator])
+        result = ''
+        for line in generator:
+            result += line
+        logger.debug(result)
 
     def build(self):
+        logger.info('Building docker image')
         self.check_response(self.client.build('./', tag=self.full_tag))
+
+    def push(self):
+        logger.info('Pushing docker image to')
+        self.check_response(self.client.push(repository=self.name, tag=self.tag))
 
     def restart_container(self):
         if len(self.running_containers) > 0:

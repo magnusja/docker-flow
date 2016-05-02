@@ -19,6 +19,7 @@ def setup_argparser():
     parser.add_argument('--name', type=str, help='Docker image/container name', required=True)
     parser.add_argument('--tag', type=str, help='Image tag', default='latest')
     parser.add_argument('--build', help='Build image from ./Dockerfile', action='store_true')
+    parser.add_argument('--push', help='Push image to registry or docker hub', action='store_true')
 
     return parser
 
@@ -32,8 +33,10 @@ def main():
     flow = dockerflow.DockerFlow(name=args.name, tag=args.tag)
 
     if args.build:
-        logger.info('Building docker container')
         flow.build()
+
+        if args.push:
+            flow.push()
 
     flow.restart_container()
 
