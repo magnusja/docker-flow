@@ -20,6 +20,8 @@ def setup_argparser():
     parser.add_argument('--tag', type=str, help='Image tag', default='latest')
     parser.add_argument('--build', help='Build image from ./Dockerfile', action='store_true')
     parser.add_argument('--push', help='Push image to registry or docker hub', action='store_true')
+    parser.add_argument('--consul-dns', help='Set DNS to container with name consul', action='store_true',
+                        dest='consul_dns')
 
     return parser
 
@@ -38,7 +40,7 @@ def main():
         if args.push:
             flow.push()
 
-    flow.restart_container()
+    flow.restart_container(args.consul_dns)
 
 
 if __name__ == '__main__':
