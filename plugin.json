@@ -1,0 +1,6 @@
+{
+  "name": "jwt-validate",
+  "config": {
+    "jwt_secret": "GEHEIM__"
+  }
+}

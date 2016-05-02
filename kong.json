@@ -1,0 +1,6 @@
+{
+  "name": "test",
+  "request_path": "/test",
+  "upstream_url": "https://httpbin.org/headers",
+  "strip_request_path": true
+}
