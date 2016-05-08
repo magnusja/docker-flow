@@ -29,8 +29,8 @@ def setup_argparser():
     parser.add_argument('--build', help='Build image from ./Dockerfile', action='store_true')
     parser.add_argument('--port', help='Port mapping line in docker run', action='append')
     parser.add_argument('--push', help='Push image to registry or docker hub', action='store_true')
-    parser.add_argument('--consul-dns', help='Set DNS to container with name consul', action='store_true',
-                        dest='consul_dns')
+    parser.add_argument('--consul-dns', help='Set DNS to container with name consul', action='store_true')
+    parser.add_argument('--logging', help='Set logging container name (e.g. logstash)')
     parser.add_argument('--kong', help='Kong admin API, e.g. http://localhost:8001')
     parser.add_argument('--kong-json', help='kong.json file for registering at kong API gateway', default='kong.json')
     parser.add_argument('--kong-plugin', help='json file to activate a plugin', action='append')
@@ -46,14 +46,15 @@ def main():
 
     # TODO: put everything in a executor style object list
 
-    flow = dockerflow.DockerFlow(name=args.name, tag=args.tag, consul_dns=args.consul_dns, ports=args.port)
+    flow = dockerflow.DockerFlow(name=args.name, tag=args.tag, consul_dns=args.consul_dns, ports=args.port, logging=args.logging)
 
     if args.build:
         flow.build()
 
         if args.push:
             flow.push()
-
+            flow.pull()
+        
     flow.restart_container()
 
     if args.kong:
