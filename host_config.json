@@ -1,0 +1,28 @@
+{
+  "NetworkMode": "default",
+  "PortBindings":
+  {
+    "8080/tcp": [
+      {
+        "HostPort": "8080",
+        "HostIp": ""
+      }
+    ],
+    "80/tcp": [
+      {
+        "HostPort": "80",
+        "HostIp": "127.0.0.1"
+      }
+    ]
+  },
+  "DnsSearch": ["service.consul"],
+  "LogConfig":
+  {
+    "Type": "gelf",
+    "Config":
+    {
+      "gelf-address": "udp://$ip_logstash:12201"
+    }
+  },
+  "Dns": ["$ip_consul", "8.8.8.8"]
+}
