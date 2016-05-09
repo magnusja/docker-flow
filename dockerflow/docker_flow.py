@@ -25,7 +25,7 @@ class DockerFlow(object):
         self.running_containers = self.client.containers(filters={'ancestor': name})
         logger.info('Running containers with image/name %s: %s', name, self.running_containers)
 
-        self.host_config = self.create_host_config(config=host_config)
+        self.host_config = self.create_host_config(config=host_config) if host_config else None
 
     def container_ip(self, name):
         logger.info('Getting %s IP', name)

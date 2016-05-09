@@ -3,6 +3,7 @@
 import argparse
 import json
 import logging
+import os
 
 import dockerflow
 import kong
@@ -44,7 +45,9 @@ def main():
 
     # TODO: put everything in a executor style object list
 
-    flow = dockerflow.DockerFlow(name=args.name, tag=args.tag, host_config=open(args.host_config).read())
+    flow = dockerflow.DockerFlow(name=args.name, tag=args.tag,
+                                 # TODO: warn if host_config file is specified but not existing
+                                 host_config=open(args.host_config).read() if os.path.isfile(args.host_config) else None)
 
     if args.build:
         flow.build()
