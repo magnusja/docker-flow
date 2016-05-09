@@ -27,35 +27,25 @@ class DockerFlow(object):
 
         self.host_config = self.create_host_config(config=host_config)
 
+    def container_ip(self, name):
+        logger.info('Getting %s IP', name)
+        container = self.client.containers(filters={'name': name})
+
+        assert len(container) == 1, 'Must have exactly one %s container running' % name
+
+        ip = container[0]['NetworkSettings']['Networks']['bridge']['IPAddress']
+        logger.info('IP: %s', ip)
+
+        return ip
+
     def create_host_config(self, config):
         logger.debug('host config: %s', config)
         template = Template(config)
-        config = template.substitute(ip_consul=LazyString(self.consul_ip), ip_logstash=LazyString(self.logging_ip))
+        config = template.substitute(ip_consul=LazyString(lambda: self.container_ip('consul')),
+                                     ip_logstash=LazyString(lambda: self.container_ip('logstash')))
 
         logger.debug('host config: %s', config)
         return json.loads(config)
-
-    def consul_ip(self):
-        logger.info('Getting consul IP')
-        consul_container = self.client.containers(filters={'name': 'consul'})
-
-        assert len(consul_container) == 1, 'Must have exactly one consul container running'
-
-        ip = consul_container[0]['NetworkSettings']['Networks']['bridge']['IPAddress']
-        logger.info('consul IP: %s', ip)
-
-        return ip
-
-    def logging_ip(self):
-        logger.info('Getting %s IP', self.logging)
-        logging_container = self.client.containers(filters={'name': 'logstash'})
-
-        assert len(logging_container) == 1, 'Must have exactly one logging container running'
-
-        ip = logging_container[0]['NetworkSettings']['Networks']['bridge']['IPAddress']
-        logger.info('logging IP: %s', ip)
-
-        return ip
 
     def check_response(self, generator):
         result = ''
